@@ -8,6 +8,7 @@ var cors = require('cors');
 
 
 var indexRouter = require('./routes/index');
+var youtubeRouter = require('./routes/youtube');
 var songrequestRouter = require('./routes/songrequest');
 var usersRouter = require('./routes/users');
 var contactRouter = require('./routes/contact');
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 app.use('/', indexRouter);
+app.use('/youtube', youtubeRouter)
 app.use('/users', usersRouter);
 app.use('/contact', contactRouter);
 app.use('/songrequest', songrequestRouter);

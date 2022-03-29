@@ -11,7 +11,6 @@ var util = require('util');
 const req = require('express/lib/request');
 const { format } = require('path');
 const { sys } = require('typescript');
-// var emailServer = "https://script.google.com/macros/s/AKfycbyUQVEmBhM5rdLso1a2iA7Xft1ZM5CHDjSaR1qwffo6PJvcE4py-1Ff-5zimIFB3l35EA/exec";
 var apiKey = process.env.EmailAPIKey;
 var toEmail = process.env.toEmail;
 var fromEmail = process.env.fromEmail;
