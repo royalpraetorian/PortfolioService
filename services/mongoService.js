@@ -135,6 +135,24 @@ async function addVoter(record, voter)
     }
 }
 
+async function deleteRecord(record)
+{
+    if(findRecord(record.id))
+    {
+        try
+        {
+            await client.connect();
+            const collection = client.db("Cluster0").collection("Song Requests");
+            await collection.deleteOne( {id: record.id} );
+            await client.close();
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+    }
+}
+
 async function unVote(record, voterIP)
 {
     record = await findRecord(record.id);
@@ -194,5 +212,6 @@ module.exports = {
     vote,
     drop,
     getCollection,
-    unVote
+    unVote,
+    deleteRecord
 }

@@ -5,6 +5,7 @@ var router = express.Router();
 var SpotifyService = require('../services/spotifyService');
 var bodyparser = require('body-parser');
 const req = require('express/lib/request');
+var playlistCache;
 
 // import {songLookup} from "../services/spotifyService";
 
@@ -24,6 +25,12 @@ router.post('/unvote', async function(req, res) {
 
 router.get('/getAllRequests', async function(req, res) {
     res.send(await MongoService.getCollection(req.ip));
+    var cache = req.app.settings.playlistCache;
+    if(cache==undefined)
+    {
+        cache = await SpotifyService.cachePlaylist();
+        req.app.settings.playlistCache = cache;
+    }
 })
 
 router.post('/drop', async function(req, res) {
@@ -35,16 +42,24 @@ router.post('/drop', async function(req, res) {
 router.get('/autofill', async function(req, res) {
     results = await findSongs(req.query['title']);
     results = results.body.tracks.items;
+    var cache = req.app.settings.playlistCache;
+    if(cache==undefined)
+    {
+        cache = await SpotifyService.cachePlaylist();
+        req.app.settings.playlistCache = cache;
+    }
+    console.log(cache);
     results = results.map((item) => {
         return {
             title: item.name, 
             popularity: item.popularity, 
             id: item.id,
+            learning: cache.some(cachedItem => item.id==cachedItem.id),
             artists: item.artists.map((artist) => artist.name), 
             album: item.album.name, 
             img: item.album.images[item.album.images.length-1].url
         };
-    })
+    });
     results = results.sort((item1, item2) => item2.popularity - item1.popularity);
     res.send(results);
 })

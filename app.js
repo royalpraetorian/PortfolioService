@@ -5,7 +5,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-
+const cron = require('node-cron');
+const spotifyService = require('./services/spotifyService');
+const mongoService = require('./services/mongoService');
 
 var indexRouter = require('./routes/index');
 var youtubeRouter = require('./routes/youtube');
@@ -14,8 +16,17 @@ var usersRouter = require('./routes/users');
 var contactRouter = require('./routes/contact');
 const { allowedNodeEnvironmentFlags } = require('process');
 const { head } = require('./routes/contact');
+const req = require('express/lib/request');
 
 var app = express();
+cron.schedule('*/30 * * * *', async function() {
+    app.set('playlistCache', await spotifyService.cachePlaylist());
+    for(var item in playlistCache)
+    {
+        mongoService.deleteRecord(item);
+    }
+});
+
 
 app.use(logger('dev'));
 app.use(cors());

@@ -1,4 +1,6 @@
+const res = require('express/lib/response');
 var SpotifyWebApi = require('spotify-web-api-node');
+const app = require('../app');
 
 const spotifyClientID = process.env.spotifyClientID;
 const spotifyClientSecret = process.env.spotifyClientSecret;
@@ -51,6 +53,20 @@ async function songLookup(trackTitle)
     return results;
 }
 
-module.exports = {songLookup};
+async function cachePlaylist()
+{
+    await authorize();
+    var results = await spotifyApi.getPlaylistTracks('41w7JMfHRR9OnfZosICDIC');
+    results = results.body.items;
+    results = results.map((item) => {
+        return {
+            id: item.track.id,
+        };
+    });
+    console.log("Cached");
+    return results;
+}
+
+module.exports = {songLookup, cachePlaylist};
 
 
