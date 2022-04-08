@@ -1,20 +1,34 @@
 const req = require('express/lib/request');
 const res = require('express/lib/response');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const mongoUsername = process.env.MongoUsername;
-const mongoPass = process.env.MongoPassword;
+
 const uri = `mongodb+srv://${mongoUsername}:${mongoPass}@cluster0.vzy46.mongodb.net/Cluster0?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
 const stringHash = require("string-hash");
 
+let mongoClient = null;
+
+function init(){
+    const mongoUsername = process.env.MongoUsername;
+    const mongoPass = process.env.MongoPassword;
+    mongoClient = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+}
+
+function connect()
+{
+    if(mongoClient == null) {
+        init();
+    }
+    return mongoClient.connect();
+}
 
 async function getCollection(ip)
 {
     let retVal;
     ip = hashIP(ip);
     try{
-        await client.connect();
-        const collection = client.db("Cluster0").collection("Song Requests");
+        await connect()
+        const collection = mongoClient.db("Cluster0").collection("Song Requests");
         retVal = await collection.find().toArray();
         retVal = retVal.map(request => { 
             request.voted = hasVoted(request, ip);
@@ -23,7 +37,7 @@ async function getCollection(ip)
         })
         retVal = retVal.sort((item1, item2) => item2.votes.length - item1.votes.length);
         console.log(retVal);
-        await client.close();
+        await mongoClient.close();
     } catch(e)
     {
         console.log(e);
@@ -59,10 +73,10 @@ async function findRecord(id)
     let retVal = null;
 
     try{
-        await client.connect();
-        const collection = client.db("Cluster0").collection("Song Requests");
+        await connect()
+        const collection = mongoClient.db("Cluster0").collection("Song Requests");
         retVal = await collection.findOne({id: id});
-        await client.close();
+        await mongoClient.close();
     }
     catch(e)
     {
@@ -80,10 +94,10 @@ async function findRecord(id)
 async function drop()
 {
     try{
-        await client.connect();
-        const collection = client.db("Cluster0").collection("Song Requests");
+        await connect()
+        const collection = mongoClient.db("Cluster0").collection("Song Requests");
         await collection.drop();
-        await client.close();
+        await mongoClient.close();
     }
     catch(e)
     {
@@ -123,13 +137,13 @@ async function vote(songRequest)
 async function addVoter(record, voter)
 {
     try{
-        await client.connect();
-        const collection = client.db("Cluster0").collection("Song Requests");
+        await connect()
+        const collection = mongoClient.db("Cluster0").collection("Song Requests");
         await collection.updateOne(
             {'id': record.id},
             {$push: {votes: voter}}
         );
-        await client.close();
+        await mongoClient.close();
     } catch(e){
         console.log(e);
     }
@@ -141,10 +155,10 @@ async function deleteRecord(record)
     {
         try
         {
-            await client.connect();
-            const collection = client.db("Cluster0").collection("Song Requests");
+            await connect()
+            const collection = mongoClient.db("Cluster0").collection("Song Requests");
             await collection.deleteOne( {id: record.id} );
-            await client.close();
+            await mongoClient.close();
         }
         catch(e)
         {
@@ -160,10 +174,10 @@ async function unVote(record, voterIP)
     if(record.votes.length==1 && hasVoted(record, voterIP))
         {
             try{
-                await client.connect();
-                const collection = client.db("Cluster0").collection("Song Requests");
+                await connect()
+                const collection = mongoClient.db("Cluster0").collection("Song Requests");
                 await collection.deleteOne( {id: record.id} );
-                await client.close();
+                await mongoClient.close();
             } catch(e){
                 console.log(e);
             }
@@ -175,13 +189,13 @@ async function unVote(record, voterIP)
     else
         {
             try{
-                await client.connect();
-                const collection = client.db("Cluster0").collection("Song Requests");
+                await connect()
+                const collection = mongoClient.db("Cluster0").collection("Song Requests");
                 await collection.updateOne(
                     {'id': record.id},
                     {$pull: { votes: {ip: voterIP} } }
                 )
-                await client.close();
+                await mongoClient.close();
             } catch(e) {
                 console.log(e);
             }
@@ -196,10 +210,10 @@ async function insertRecord(songRequest)
 {
     try
     {
-        await client.connect();
-        const collection = client.db("Cluster0").collection("Song Requests");
+        await connect()
+        const collection = mongoClient.db("Cluster0").collection("Song Requests");
         await collection.insertOne(songRequest);
-        await client.close();
+        await mongoClient.close();
     }
     catch(e)
     {

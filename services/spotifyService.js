@@ -2,13 +2,19 @@ const res = require('express/lib/response');
 let SpotifyWebApi = require('spotify-web-api-node');
 const app = require('../app');
 
-const spotifyClientID = process.env.spotifyClientID;
-const spotifyClientSecret = process.env.spotifyClientSecret;
+let spotifyApi = null;
 
-const spotifyApi = new SpotifyWebApi({
-    clientId: spotifyClientID,
-    clientSecret: spotifyClientSecret
-});
+async function init()
+{
+    const spotifyClientID = process.env.spotifyClientID;
+    const spotifyClientSecret = process.env.spotifyClientSecret;
+    console.log({spotifyClientID, spotifyClientSecret});
+    
+    spotifyApi = new SpotifyWebApi({
+        clientId: spotifyClientID,
+        clientSecret: spotifyClientSecret
+    });
+}
 
 let tokenIssuedTime;
 let tokenExpirationTime;
@@ -16,6 +22,9 @@ let authToken;
 
 async function authorize()
 {
+    if(spotifyApi == null) {
+        init();
+    }
     if(!authToken || shouldRefresh())
     {
         let token = await getToken();
@@ -27,9 +36,6 @@ async function authorize()
 
 async function getToken()
 {
-    console.log(process.env);
-    console.log("ID: " + spotifyClientID);
-    console.log("Secret: " + spotifyClientSecret);
     let response;
     try{
         tokenIssuedTime = Date.now();
