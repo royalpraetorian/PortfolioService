@@ -37,9 +37,9 @@ async function getToken()
     } 
     catch (e)
     {
-        console.log(e);
+        // console.log(e);
     }
-    console.log(response);
+    // console.log(response);
     return response.body;
 }
 
