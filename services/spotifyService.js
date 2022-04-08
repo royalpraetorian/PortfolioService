@@ -18,8 +18,6 @@ async function authorize()
 {
     if(!authToken || shouldRefresh())
     {
-        console.log("ID: " + spotifyClientID);
-        console.log("Secret: " + spotifyClientSecret);
         let token = await getToken();
         console.log(token);
         authToken = token['access_token'];
@@ -29,6 +27,8 @@ async function authorize()
 
 async function getToken()
 {
+    console.log("ID: " + spotifyClientID);
+    console.log("Secret: " + spotifyClientSecret);
     let response;
     try{
         tokenIssuedTime = Date.now();
