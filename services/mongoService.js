@@ -10,7 +10,7 @@ const stringHash = require("string-hash");
 
 async function getCollection(ip)
 {
-    var retVal;
+    let retVal;
     ip = hashIP(ip);
     try{
         await client.connect();
@@ -56,7 +56,7 @@ function hashIP(ip)
 
 async function findRecord(id)
 {
-    var retVal = null;
+    let retVal = null;
 
     try{
         await client.connect();
@@ -94,7 +94,7 @@ async function drop()
 async function vote(songRequest)
 {
     songRequest.votes[0].ip = hashIP(songRequest.votes[0].ip)
-    var record = await findRecord(songRequest.id);
+    let record = await findRecord(songRequest.id);
     if(!hasVoted(record, songRequest.votes[0].ip))
     {
         if (record==null)

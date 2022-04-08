@@ -1,19 +1,19 @@
 
-var express = require('express');
-var router = express.Router();
-var multiparty = require('multiparty');
-var FormData = require('form-data');
-// var multer = require('multer')();
-var axios = require('axios');
-var sgMail = require('@sendgrid/mail');
-var http = require('http');
-var util = require('util');
+const express = require('express');
+const router = express.Router();
+const multiparty = require('multiparty');
+const FormData = require('form-data');
+// const multer = require('multer')();
+const axios = require('axios');
+const sgMail = require('@sendgrid/mail');
+const http = require('http');
+const util = require('util');
 const req = require('express/lib/request');
 const { format } = require('path');
 const { sys } = require('typescript');
-var apiKey = process.env.EmailAPIKey;
-var toEmail = process.env.toEmail;
-var fromEmail = process.env.fromEmail;
+const apiKey = process.env.EmailAPIKey;
+const toEmail = process.env.toEmail;
+const fromEmail = process.env.fromEmail;
 sgMail.setApiKey(apiKey);
 
 router.post('/', async function(req, res) {

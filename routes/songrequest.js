@@ -1,9 +1,9 @@
-var express = require('express');
-var MongoService = require('../services/mongoService');
+const express = require('express');
+const MongoService = require('../services/mongoService');
 const res = require('express/lib/response');
-var router = express.Router();
-var SpotifyService = require('../services/spotifyService');
-var bodyparser = require('body-parser');
+const router = express.Router();
+const SpotifyService = require('../services/spotifyService');
+const bodyparser = require('body-parser');
 const req = require('express/lib/request');
 var playlistCache;
 
