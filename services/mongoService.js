@@ -2,7 +2,6 @@ const req = require('express/lib/request');
 const res = require('express/lib/response');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const uri = `mongodb+srv://${mongoUsername}:${mongoPass}@cluster0.vzy46.mongodb.net/Cluster0?retryWrites=true&w=majority`;
 
 const stringHash = require("string-hash");
 
@@ -11,7 +10,9 @@ let mongoClient = null;
 function init(){
     const mongoUsername = process.env.MongoUsername;
     const mongoPass = process.env.MongoPassword;
+    const uri = `mongodb+srv://${mongoUsername}:${mongoPass}@cluster0.vzy46.mongodb.net/Cluster0?retryWrites=true&w=majority`;
     mongoClient = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+    
 }
 
 function connect()
