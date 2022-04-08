@@ -1,5 +1,5 @@
 const res = require('express/lib/response');
-var SpotifyWebApi = require('spotify-web-api-node');
+let SpotifyWebApi = require('spotify-web-api-node');
 const app = require('../app');
 
 const spotifyClientID = process.env.spotifyClientID;
@@ -10,15 +10,18 @@ const spotifyApi = new SpotifyWebApi({
     clientSecret: spotifyClientSecret
 });
 
-var tokenIssuedTime;
-var tokenExpirationTime;
-var authToken;
+let tokenIssuedTime;
+let tokenExpirationTime;
+let authToken;
 
 async function authorize()
 {
     if(!authToken || shouldRefresh())
     {
-        var token = await getToken();
+        console.log("ID: " + spotifyClientID);
+        console.log("Secret: " + spotifyClientSecret);
+        let token = await getToken();
+        console.log(token);
         authToken = token['access_token'];
         spotifyApi.setAccessToken(authToken);
     }
@@ -26,7 +29,7 @@ async function authorize()
 
 async function getToken()
 {
-    var response;
+    let response;
     try{
         tokenIssuedTime = Date.now();
         response = await spotifyApi.clientCredentialsGrant();
@@ -49,14 +52,15 @@ async function songLookup(trackTitle)
 {
     await authorize();
     tracktitle = trackTitle.trim();
-    var results = await spotifyApi.searchTracks(`track:${trackTitle}`);
+    let results = await spotifyApi.searchTracks(`track:${trackTitle}`);
     return results;
 }
 
 async function cachePlaylist()
 {
     await authorize();
-    var results = await spotifyApi.getPlaylistTracks('41w7JMfHRR9OnfZosICDIC');
+    let results = await spotifyApi.getPlaylistTracks('41w7JMfHRR9OnfZosICDIC');
+    console.log(results);
     results = results.body.items;
     results = results.map((item) => {
         return {
