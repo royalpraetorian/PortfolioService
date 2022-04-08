@@ -27,6 +27,7 @@ async function authorize()
 
 async function getToken()
 {
+    console.log(process.env);
     console.log("ID: " + spotifyClientID);
     console.log("Secret: " + spotifyClientSecret);
     let response;
