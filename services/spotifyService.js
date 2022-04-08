@@ -19,7 +19,7 @@ async function authorize()
     if(!authToken || shouldRefresh())
     {
         let token = await getToken();
-        console.log(token);
+        // console.log(token);
         authToken = token['access_token'];
         spotifyApi.setAccessToken(authToken);
     }
